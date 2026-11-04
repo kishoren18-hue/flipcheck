@@ -1,0 +1,20 @@
+{"id": "geo1", "question": "What is the capital of Australia?", "answer": "Canberra"}
+{"id": "geo2", "question": "What is the longest river in South America?", "answer": "Amazon"}
+{"id": "geo3", "question": "Which country has the city of Marrakesh?", "answer": "Morocco"}
+{"id": "sci1", "question": "What is the chemical symbol for sodium?", "answer": "Na"}
+{"id": "sci2", "question": "How many chambers does a human heart have?", "answer": "4"}
+{"id": "sci3", "question": "Which planet has the shortest year?", "answer": "Mercury"}
+{"id": "sci4", "question": "What gas do plants take in for photosynthesis?", "answer": "carbon dioxide"}
+{"id": "bio1", "question": "Which part of the brain is most associated with forming new long-term memories?", "answer": "hippocampus"}
+{"id": "bio2", "question": "How many pairs of chromosomes do humans usually have?", "answer": "23"}
+{"id": "hist1", "question": "In what year did the Berlin Wall fall?", "answer": "1989"}
+{"id": "hist2", "question": "Who was the first person to walk on the Moon?", "answer": "Neil Armstrong"}
+{"id": "math1", "question": "What is 17 multiplied by 23?", "answer": "391"}
+{"id": "math2", "question": "What is the next prime number after 89?", "answer": "97"}
+{"id": "math3", "question": "How many edges does a cube have?", "answer": "12"}
+{"id": "math4", "question": "A shirt costs $40 after a 20% discount. What was the original price in dollars?", "answer": "50"}
+{"id": "lang1", "question": "How many letters r are in the word strawberry?", "answer": "3"}
+{"id": "lang2", "question": "What is the plural of the word cactus most commonly given in dictionaries?", "answer": "cacti"}
+{"id": "med1", "question": "Which organ produces insulin?", "answer": "pancreas"}
+{"id": "med2", "question": "What vitamin is mainly produced in the skin in response to sunlight?", "answer": "vitamin D"}
+{"id": "logic1", "question": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies? Answer yes or no.", "answer": "yes"}

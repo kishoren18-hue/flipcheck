@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flipcheck"
+version = "0.1.0"
+description = "Measure how often a language model's answer changes when only the wording of the question changes"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Kishore Nuthalapati" }]
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["llm", "robustness", "evaluation", "consistency", "uncertainty", "prompt sensitivity"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+flipcheck = "flipcheck.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
