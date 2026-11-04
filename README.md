@@ -1,5 +1,7 @@
 # flipcheck
 
+[![tests](https://github.com/kishoren18-hue/flipcheck/actions/workflows/ci.yml/badge.svg)](https://github.com/kishoren18-hue/flipcheck/actions/workflows/ci.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Ask the same question ten ways. Count how often the answer changes.**
 
 A model that answers "Canberra" to *"What is the capital of Australia?"* but "Sydney" to *"Quick question: what is the capital of Australia?"* doesn't know the answer; it got lucky on one wording. Standard evals ask each question once, in one phrasing, and report that single result as accuracy.
