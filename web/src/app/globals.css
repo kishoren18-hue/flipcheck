@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* Design tokens. Each app sets --accent / --accent-ink in its own layout. */
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --surface-2: #f1f1ee;
+  --ink: #16191f;
+  --muted: #5f6673;
+  --line: #e3e3de;
+  --accent: #0f766e;
+  --accent-ink: #ffffff;
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, transparent);
+  --danger: #b42318;
+  --danger-soft: #fdeceb;
+  --warn: #b25e09;
+  --warn-soft: #fff4e5;
+  --ok: #18794e;
+  --ok-soft: #e9f6ef;
+  --info-soft: #eef2f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --surface: #161920;
+    --surface-2: #1d2129;
+    --ink: #e9ebef;
+    --muted: #9aa1ad;
+    --line: #2a2f39;
+    --danger: #f0857a;
+    --danger-soft: #3a1e1c;
+    --warn: #f2b25c;
+    --warn-soft: #36290f;
+    --ok: #63c793;
+    --ok-soft: #13301f;
+    --info-soft: #1b2230;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-info-soft: var(--info-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

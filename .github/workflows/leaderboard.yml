@@ -1,0 +1,45 @@
+name: update leaderboard
+
+# Manual: Actions tab -> "update leaderboard" -> Run workflow.
+# Needs the repository secret ANTHROPIC_API_KEY. Results are committed to
+# web/src/data/leaderboard.json so every number on the site is auditable.
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: "Comma-separated model IDs"
+        default: "claude-haiku-5-5,claude-sonnet-5-5"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: leaderboard
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Run leaderboard
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODELS: ${{ inputs.models }}
+        run: python web/scripts/build_leaderboard.py --models "$MODELS"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/src/data/leaderboard.json
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Update leaderboard ($MODELS)"
+          git push
+        env:
+          MODELS: ${{ inputs.models }}

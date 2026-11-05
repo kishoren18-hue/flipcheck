@@ -1,0 +1,40 @@
+{"id": "arith1", "type": "number", "question": "What is 17 multiplied by 23?", "answer": "391"}
+{"id": "arith2", "type": "number", "question": "What is 1,000 minus 1?", "answer": "999"}
+{"id": "arith3", "type": "number", "question": "A shirt costs $40 after a 20% discount. What was the original price in dollars?", "answer": "50"}
+{"id": "arith4", "type": "number", "question": "If 5 machines make 5 widgets in 5 minutes, how many minutes would 100 machines take to make 100 widgets?", "answer": "5"}
+{"id": "arith5", "type": "number", "question": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How many cents does the ball cost?", "answer": "5"}
+{"id": "arith6", "type": "number", "question": "What is the next prime number after 89?", "answer": "97"}
+{"id": "arith7", "type": "number", "question": "How many edges does a cube have?", "answer": "12"}
+{"id": "arith8", "type": "number", "question": "What is 15% of 260?", "answer": "39"}
+{"id": "arith9", "type": "number", "question": "How many days are there in a leap year?", "answer": "366"}
+{"id": "arith10", "type": "number", "question": "If you fold a piece of paper in half three times, how many layers thick is it?", "answer": "8"}
+{"id": "lang1", "type": "number", "question": "How many letters r are in the word strawberry?", "answer": "3"}
+{"id": "lang2", "type": "number", "question": "How many vowels (a, e, i, o, u) are in the word 'encyclopedia'?", "answer": "5"}
+{"id": "lang3", "type": "number", "question": "How many words are in this sentence: 'The quick brown fox jumps over the lazy dog'?", "answer": "9"}
+{"id": "logic1", "type": "yesno", "question": "If all bloops are razzies and all razzies are lazzies, are all bloops lazzies?", "answer": "yes"}
+{"id": "logic2", "type": "yesno", "question": "If some cats are black and some black things are cars, does it follow that some cats are cars?", "answer": "no"}
+{"id": "logic3", "type": "yesno", "question": "Mary is taller than Ann. Ann is taller than Joe. Is Joe taller than Mary?", "answer": "no"}
+{"id": "logic4", "type": "number", "question": "Tom has 3 sisters. Each of his sisters has 1 brother. How many brothers does Tom have?", "answer": "0"}
+{"id": "logic5", "type": "number", "question": "A farmer has 17 sheep. All but 9 run away. How many sheep are left?", "answer": "9"}
+{"id": "logic7", "type": "yesno", "question": "Is the number 91 prime?", "answer": "no"}
+{"id": "sci1", "type": "number", "question": "How many chambers does a human heart have?", "answer": "4"}
+{"id": "sci2", "type": "number", "question": "How many pairs of chromosomes do humans usually have?", "answer": "23"}
+{"id": "sci3", "type": "number", "question": "At sea level, at what temperature in degrees Celsius does water boil?", "answer": "100"}
+{"id": "sci4", "type": "number", "question": "How many bones does an adult human body usually have?", "answer": "206"}
+{"id": "sci5", "type": "yesno", "question": "Is a tomato botanically a fruit?", "answer": "yes"}
+{"id": "sci6", "type": "yesno", "question": "Does sound travel faster in water than in air?", "answer": "yes"}
+{"id": "sci7", "type": "yesno", "question": "Is the Great Wall of China visible from the Moon with the naked eye?", "answer": "no"}
+{"id": "sci8", "type": "yesno", "question": "Do antibiotics work against viral infections like the common cold?", "answer": "no"}
+{"id": "hist1", "type": "number", "question": "In what year did the Berlin Wall fall?", "answer": "1989"}
+{"id": "hist2", "type": "number", "question": "In what year did the Apollo 11 Moon landing happen?", "answer": "1969"}
+{"id": "hist3", "type": "number", "question": "How many original colonies formed the United States?", "answer": "13"}
+{"id": "hist4", "type": "yesno", "question": "Did Cleopatra live closer in time to the Moon landing than to the building of the Great Pyramid of Giza?", "answer": "yes"}
+{"id": "geo1", "type": "yesno", "question": "Is Canberra the capital of Australia?", "answer": "yes"}
+{"id": "geo2", "type": "yesno", "question": "Is Reno, Nevada farther west than Los Angeles, California?", "answer": "yes"}
+{"id": "geo3", "type": "number", "question": "How many continents are there in the most commonly taught model in English-speaking countries?", "answer": "7"}
+{"id": "geo4", "type": "yesno", "question": "Is Bolivia a landlocked country?", "answer": "yes"}
+{"id": "med1", "type": "yesno", "question": "Is insulin produced by the pancreas?", "answer": "yes"}
+{"id": "med2", "type": "yesno", "question": "Is O negative the universal donor blood type for red blood cells?", "answer": "yes"}
+{"id": "med4", "type": "yesno", "question": "Is the femur the longest bone in the human body?", "answer": "yes"}
+{"id": "arith11", "type": "number", "question": "What is 2 to the power of 10?", "answer": "1024"}
+{"id": "geo5", "type": "number", "question": "How many sides does a hexagon have?", "answer": "6"}

@@ -1,0 +1,60 @@
+name: web app
+
+on:
+  push:
+    paths: ["web/**", ".github/workflows/web.yml"]
+  pull_request:
+    paths: ["web/**"]
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      # install the library from this checkout, then the API's other dependencies
+      - run: pip install -e .. && grep -v "git+" requirements.txt | pip install -r /dev/stdin && pip install pytest
+      - run: python -m pytest api -q
+
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v5
+      - name: Apply migration on a Supabase-like stub and run security tests
+        run: |
+          psql -v ON_ERROR_STOP=1 -q -f supabase/tests/supabase_stub.sql
+          psql -v ON_ERROR_STOP=1 -q -f supabase/migrations/0001_flipcheck.sql
+          psql -v ON_ERROR_STOP=1 -q -f supabase/tests/rls_test.sql | tee out.txt
+          grep -q "RLS TESTS PASSED" out.txt
