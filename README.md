@@ -53,9 +53,28 @@ results, summary = run(items, my_model_fn, n_variants=10, answer_type="number")
 print(summary.flip_rate, summary.accuracy_worst_case)
 ```
 
+## Wording sensitivity vs. sampling noise
+
+At temperature above 0, a model can change its answer just by being asked again. A single run can't tell that apart from sensitivity to wording. Ask each wording several times:
+
+```bash
+flipcheck questions.jsonl --backend openai --model gpt-4o-mini --temperature 0.7 --samples 5
+```
+
+Each wording's answer becomes the majority over its 5 samples, so the **flip rate** now measures wording sensitivity with sampling noise averaged out. Two extra numbers report the sampling side:
+
+* **Sampling flip rate:** share of questions where at least one wording disagreed with itself across samples.
+* **Within-wording agreement:** how consistent repeated samples of the same wording are.
+
+A model with high sampling noise but a low flip rate is uncertain but not wording-sensitive. A model with the reverse is confidently inconsistent, which is the more worrying case.
+
+## Resuming and re-analyzing
+
+Every reply is cached in `.flipcheck_cache.jsonl`, keyed by model, temperature, exact prompt and sample number. If a long run is interrupted, re-run the same command and it continues from where it stopped. Changing report options costs no new API calls. Use `--no-cache` to always call the model, or `--cache path` to keep separate caches.
+
 ## Why the rewordings are rule-based
 
-Every rewording changes surface form only, never content, so a different answer can only mean instability. Letting a model write paraphrases is more varied but risks changing the meaning; `flipcheck.llm_paraphrases()` is available for that, and you should spot-check its output.
+Every rewording changes surface form only, never content, so a different answer can only mean instability. Model-written paraphrases are more varied but can drift in meaning. They're available with `--llm-paraphrases N` (the model under test writes N extra rewordings per question) or `flipcheck.llm_paraphrases()`. Spot-check them before trusting results.
 
 ## Uses
 
@@ -80,6 +99,10 @@ pip install -e ".[dev]"
 pytest -q
 python examples/simulated_demo.py
 ```
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and ideas to start with, [CHANGELOG.md](CHANGELOG.md) for what's new, and [SECURITY.md](SECURITY.md) to report a problem privately. If you use this in research, GitHub's "Cite this repository" button (from [CITATION.cff](CITATION.cff)) gives a ready-made citation.
 
 ## License
 

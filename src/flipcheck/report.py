@@ -24,6 +24,13 @@ def to_html(results: list[QuestionResult], s: Summary, model_name: str = "", not
          "does agreement work as a black-box confidence signal? 0.5 = no"),
         ("Unparsed replies", _pct(s.unparsed_rate), "replies with no extractable answer"),
     ]
+    if s.n_samples > 1:
+        cards += [
+            ("Sampling flip rate", _pct(s.sampling_flip_rate),
+             f"questions where one wording disagreed with itself across {s.n_samples} samples"),
+            ("Within-wording agreement", _pct(s.mean_within_agreement),
+             "how consistent repeated samples of the same wording are"),
+        ]
     card_html = "".join(f'<div class="card"><div class="v">{v}</div><div class="k">{k}</div>'
                         f'<div class="h">{html.escape(h)}</div></div>' for k, v, h in cards)
     rows = []

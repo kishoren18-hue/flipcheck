@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "flipcheck: measuring answer stability under rewording"
+abstract: "Measures how often a language model's answer changes when only the wording of a question changes, separating wording sensitivity from sampling noise."
+type: software
+authors:
+  - family-names: Nuthalapati
+    given-names: Kishore
+repository-code: "https://github.com/kishoren18-hue/flipcheck"
+license: MIT
+version: 0.2.0
+date-released: "2026-11-04"
+keywords:
+  - robustness
+  - prompt sensitivity
+  - language models
+  - evaluation
+  - consistency

@@ -68,5 +68,56 @@ def test_cli_with_command_backend(tmp_path):
     out = tmp_path / "r.html"
     cmd = f"{sys.executable} -c \"import sys; sys.stdin.read(); print('Answer: 42')\""
     assert main([str(q), "--backend", "command", "--cmd", cmd, "--variants", "4", "--answer-type", "number",
-                 "--html", str(out), "--max-flip-rate", "0"]) == 0
+                 "--html", str(out), "--max-flip-rate", "0", "--cache", str(tmp_path / "c.jsonl")]) == 0
     assert out.exists()
+
+
+def test_cache_resumes_without_new_calls(tmp_path):
+    from flipcheck import CachedBackend
+
+    calls = []
+
+    def model(p):
+        calls.append(p)
+        return "Answer: 4"
+
+    item = {"id": "a", "question": "What is 2+2?", "answer": "4"}
+    c1 = CachedBackend(model, tmp_path / "c.jsonl", namespace="m")
+    evaluate_question(item, c1, n_variants=5, answer_type="number", workers=1)
+    assert len(calls) == 5 and c1.misses == 5
+    c2 = CachedBackend(model, tmp_path / "c.jsonl", namespace="m")  # fresh process, same file
+    evaluate_question(item, c2, n_variants=5, answer_type="number", workers=1)
+    assert len(calls) == 5 and c2.hits == 5
+    # a truncated last line (interrupted run) is tolerated
+    with open(tmp_path / "c.jsonl", "a") as f:
+        f.write('{"k": "abc", "r": ')
+    CachedBackend(model, tmp_path / "c.jsonl", namespace="m")
+
+
+def test_samples_separate_sampling_noise_from_wording():
+    import itertools
+
+    counter = itertools.count()
+
+    def noisy_but_wording_blind(p):
+        # every wording gets the same answer distribution: 2 of 3 samples say 4
+        return "Answer: 5" if next(counter) % 3 == 2 else "Answer: 4"
+
+    item = {"id": "a", "question": "What is 2+2?", "answer": "4"}
+    r = evaluate_question(item, noisy_but_wording_blind, n_variants=6, answer_type="number", workers=1, samples=3)
+    assert not r.flipped                     # wording-level majorities all agree
+    assert r.within_agreement == pytest.approx(2 / 3)
+    from flipcheck.core import summarize
+    s = summarize([r])
+    assert s.sampling_flip_rate == 1.0 and s.flip_rate == 0.0 and s.n_samples == 3
+
+
+def test_llm_paraphrases_are_added():
+    def model(p):
+        if p.startswith("Rewrite the question"):
+            return "1. What do you get when adding 2 and 2?\n2. 2 plus 2 equals what?"
+        return "Answer: 4"
+
+    results, s = run([{"question": "What is 2+2?", "answer": "4"}], model, n_variants=3,
+                     answer_type="number", workers=1, n_llm_paraphrases=2)
+    assert s.n_variants == 5 and not results[0].flipped

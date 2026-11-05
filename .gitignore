@@ -4,3 +4,6 @@ __pycache__/
 dist/
 build/
 .venv/
+.flipcheck_cache.jsonl
+.coverage
+coverage.xml

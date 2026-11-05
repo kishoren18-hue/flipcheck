@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .backends import make_backend
+from .cache import CachedBackend
 from .core import run
 from .report import to_html
 
@@ -36,13 +37,30 @@ def main(argv=None) -> int:
     ap.add_argument("--html", help="write an HTML report here")
     ap.add_argument("--jsonl", help="write per-question results here")
     ap.add_argument("--max-flip-rate", type=float, help="exit 1 if the flip rate exceeds this (for CI)")
+    ap.add_argument("--samples", type=int, default=1,
+                    help="ask each wording this many times (use with --temperature > 0) to separate "
+                         "sampling noise from wording sensitivity")
+    ap.add_argument("--llm-paraphrases", type=int, default=0,
+                    help="also have the model write this many extra rewordings per question")
+    ap.add_argument("--cache", default=".flipcheck_cache.jsonl",
+                    help="reply cache for resuming and re-analysis (default .flipcheck_cache.jsonl)")
+    ap.add_argument("--no-cache", action="store_true", help="always call the model")
     a = ap.parse_args(argv)
+    if a.samples > 1 and a.temperature == 0:
+        print("note: --samples > 1 at temperature 0 will usually return identical samples", file=sys.stderr)
 
     backend = make_backend(a.backend, a.model, a.base_url, a.cmd, a.temperature)
+    cached = None
+    if not a.no_cache:
+        cached = CachedBackend(backend, a.cache, namespace=f"{backend!r}|t={a.temperature}")
+        backend = cached
     items = load_items(a.questions)
     results, s = run(items, backend, a.variants, a.answer_type, a.workers,
-                     progress=lambda i, n: print(f"\r{i}/{n}", end="", file=sys.stderr))
+                     progress=lambda i, n: print(f"\r{i}/{n}", end="", file=sys.stderr),
+                     samples=a.samples, n_llm_paraphrases=a.llm_paraphrases)
     print(file=sys.stderr)
+    if cached:
+        print(f"cache: {cached.hits} reused, {cached.misses} new calls ({a.cache})", file=sys.stderr)
     for k, v in s.__dict__.items():
         print(f"{k:<22} {v if not isinstance(v, float) else round(v, 3)}")
     if a.jsonl:
@@ -50,7 +68,7 @@ def main(argv=None) -> int:
             for r in results:
                 f.write(json.dumps(r.as_dict()) + "\n")
     if a.html:
-        Path(a.html).write_text(to_html(results, s, repr(backend), f"temperature={a.temperature}"))
+        Path(a.html).write_text(to_html(results, s, repr(backend), f"temperature={a.temperature}, samples per wording={a.samples}"))
         print(f"report: {a.html}", file=sys.stderr)
     if a.max_flip_rate is not None and s.flip_rate > a.max_flip_rate:
         return 1
