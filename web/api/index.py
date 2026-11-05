@@ -11,9 +11,10 @@ from typing import Literal
 
 import httpx
 from fastapi import FastAPI, Header, HTTPException
+from pydantic import BaseModel, Field, field_validator
+
 from flipcheck import evaluate_question, summarize
 from flipcheck.backends import Anthropic
-from pydantic import BaseModel, Field, field_validator
 
 DAILY_LIMIT = 15
 DEFAULT_MODELS = "claude-haiku-5-5,claude-sonnet-5-5"
