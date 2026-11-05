@@ -26,8 +26,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="flipcheck",
                                  description="Measure how often a model's answer changes when only the wording changes.")
     ap.add_argument("questions", help="JSONL with question (and optional id, answer)")
-    ap.add_argument("--backend", choices=["openai", "anthropic", "command"], required=True)
-    ap.add_argument("--model", help="model name (openai/anthropic backends)")
+    ap.add_argument("--backend", choices=["openai", "anthropic", "gemini", "command"], required=True)
+    ap.add_argument("--model", help="model name (openai/anthropic/gemini backends)")
     ap.add_argument("--base-url", help="OpenAI-compatible base URL (default api.openai.com/v1)")
     ap.add_argument("--cmd", help="shell command for the command backend, e.g. 'ollama run llama3.1'")
     ap.add_argument("--variants", type=int, default=8, help="rewordings per question (max 12)")

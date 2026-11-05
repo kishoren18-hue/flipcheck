@@ -50,7 +50,7 @@ export default function About() {
         <Card className="overflow-x-auto font-mono text-[13px] leading-6">
           <pre>{`Next.js 15 (TypeScript, Tailwind) ── leaderboard page reads leaderboard.json
    │
-   ├─ POST /api/py/run ──► FastAPI (Python) ──► flipcheck library ──► Claude API
+   ├─ POST /api/py/run ──► FastAPI (Python) ──► flipcheck library ──► Gemini / Claude API
    │                            └─► Supabase RPC: per-user daily quota
    └─ save / share checks ──► Supabase Postgres (row-level security) + Auth
 

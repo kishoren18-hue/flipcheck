@@ -121,3 +121,38 @@ def test_llm_paraphrases_are_added():
     results, s = run([{"question": "What is 2+2?", "answer": "4"}], model, n_variants=3,
                      answer_type="number", workers=1, n_llm_paraphrases=2)
     assert s.n_variants == 5 and not results[0].flipped
+
+
+def test_gemini_backend_builds_request_and_skips_thoughts(monkeypatch):
+    from flipcheck import backends
+
+    seen = {}
+
+    def fake_post(url, body, headers, timeout, retries=3, backoff=1.0):
+        seen.update(url=url, body=body, headers=headers)
+        return {"candidates": [{"content": {"parts": [
+            {"text": "thinking...", "thought": True}, {"text": "Canberra"}]}}]}
+
+    monkeypatch.setattr(backends, "_post", fake_post)
+    g = backends.from_spec("gemini:gemini-3.5-flash-lite", api_key="k")
+    assert g("What is the capital of Australia?") == "Canberra"
+    assert seen["url"].endswith("/models/gemini-3.5-flash-lite:generateContent")
+    assert seen["headers"] == {"x-goog-api-key": "k"}
+    assert seen["body"]["generationConfig"]["thinkingConfig"] == {"thinkingLevel": "low"}
+    assert seen["body"]["contents"][0]["parts"][0]["text"].startswith("What is")
+
+
+def test_gemini_text_reports_blocked_prompt():
+    from flipcheck.backends import gemini_text
+
+    with pytest.raises(RuntimeError, match="SAFETY"):
+        gemini_text({"promptFeedback": {"blockReason": "SAFETY"}})
+
+
+def test_from_spec_rejects_bad_specs():
+    from flipcheck.backends import Anthropic, from_spec
+
+    assert isinstance(from_spec("anthropic:claude-haiku-5-5", api_key="k"), Anthropic)
+    for bad in ["gemini", "nope:model", "gemini:"]:
+        with pytest.raises(ValueError):
+            from_spec(bad)

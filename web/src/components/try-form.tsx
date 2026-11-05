@@ -150,6 +150,10 @@ export function TryForm({ signedIn }: { signedIn: boolean }) {
             </Button>
             <span className="text-xs text-muted">Temperature 0, so differences come from wording, not randomness.</span>
           </div>
+          <p className="text-xs text-muted">
+            Questions are sent to the model&apos;s provider. Free-tier Gemini requests may be used by Google to improve its
+            models and can be read by human reviewers, so don&apos;t type anything personal.
+          </p>
         </form>
       </Card>
 

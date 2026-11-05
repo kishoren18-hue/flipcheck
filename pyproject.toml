@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flipcheck"
-version = "0.2.0"
+version = "0.3.0"
 description = "Measure how often a language model's answer changes when only the wording of the question changes"
 readme = "README.md"
 license = { text = "MIT" }

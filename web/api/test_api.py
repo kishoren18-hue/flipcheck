@@ -49,9 +49,28 @@ def fake_model(monkeypatch, fn):
     monkeypatch.setattr(api, "make_backend", lambda model: fn)
 
 
-def test_health_lists_models(monkeypatch):
-    monkeypatch.setenv("CLAUDE_MODELS", "a, b ,")
-    assert client.get("/api/py/health").json()["models"] == ["a", "b"]
+def test_health_lists_only_models_with_keys(monkeypatch):
+    monkeypatch.setenv("AI_MODELS", "gemini-a, claude-b ,other")
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    h = client.get("/api/py/health").json()
+    assert h["models"] == ["gemini-a"] and h["ai"] is True
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
+    assert client.get("/api/py/health").json()["models"] == ["gemini-a", "claude-b"]
+
+
+def test_health_without_keys(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    h = client.get("/api/py/health").json()
+    assert h["models"] == [] and h["ai"] is False
+
+
+def test_backend_by_provider(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "g")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
+    assert isinstance(api.make_backend("gemini-3.5-flash-lite"), api.Gemini)
+    assert isinstance(api.make_backend("claude-haiku-5-5"), api.Anthropic)
 
 
 def test_run_requires_sign_in(monkeypatch):
@@ -62,6 +81,7 @@ def test_run_requires_sign_in(monkeypatch):
 
 
 def test_run_rejects_unknown_model(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "k")
     r = client.post("/api/py/run", json={**Q, "model": "gpt-5"}, headers={"Authorization": "Bearer t"})
     assert r.status_code == 422
 

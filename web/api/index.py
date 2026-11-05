@@ -14,14 +14,23 @@ from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from flipcheck import evaluate_question, summarize
-from flipcheck.backends import Anthropic
+from flipcheck.backends import Anthropic, Gemini
 
 DAILY_LIMIT = 15
-DEFAULT_MODELS = "claude-haiku-5-5,claude-sonnet-5-5"
+# Gemini models work with a free Google AI Studio key. Claude models are listed too,
+# but only offered when ANTHROPIC_API_KEY is set.
+DEFAULT_MODELS = "gemini-3.5-flash-lite,gemini-3.8-flash,claude-haiku-5-5"
+KEY_FOR = {"gemini": "GEMINI_API_KEY", "claude": "ANTHROPIC_API_KEY"}
+
+
+def provider(model: str) -> str | None:
+    return next((p for p in KEY_FOR if model.startswith(p)), None)
 
 
 def enabled_models() -> list[str]:
-    return [m.strip() for m in os.environ.get("CLAUDE_MODELS", DEFAULT_MODELS).split(",") if m.strip()]
+    """Configured models whose provider has an API key on this deployment."""
+    configured = [m.strip() for m in os.environ.get("AI_MODELS", DEFAULT_MODELS).split(",") if m.strip()]
+    return [m for m in configured if provider(m) and os.environ.get(KEY_FOR[provider(m)])]
 
 
 app = FastAPI(title="flipcheck API", version="0.2.0", docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
@@ -46,7 +55,7 @@ class RunIn(BaseModel):
 def health():
     return {
         "ok": True,
-        "ai": bool(os.environ.get("ANTHROPIC_API_KEY")),
+        "ai": bool(enabled_models()),
         "accounts": bool(os.environ.get("SUPABASE_URL") and os.environ.get("SUPABASE_ANON_KEY")),
         "models": enabled_models(),
         "daily_limit": DAILY_LIMIT,
@@ -74,21 +83,29 @@ async def take_quota(authorization: str | None) -> None:
 
 
 def make_backend(model: str):
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    p = provider(model)
+    key = os.environ.get(KEY_FOR[p]) if p else None
     if not key:
         raise HTTPException(503, "Live checks aren't configured on this deployment yet.")
+    if p == "gemini":
+        return Gemini(model, api_key=key, temperature=0.0, max_tokens=1024, timeout=40)
     return Anthropic(model, api_key=key, temperature=0.0, max_tokens=300, timeout=40)
 
 
 @app.post("/api/py/run")
 async def run(body: RunIn, authorization: str | None = Header(default=None)):
-    if body.model not in enabled_models():
-        raise HTTPException(422, f"Model not available. Choose one of: {', '.join(enabled_models())}.")
+    models = enabled_models()
+    if not models:
+        raise HTTPException(503, "Live checks aren't configured on this deployment yet.")
+    if body.model not in models:
+        raise HTTPException(422, f"Model not available. Choose one of: {', '.join(models)}.")
     backend = make_backend(body.model)
     await take_quota(authorization)
     item = {"id": "live", "question": body.question, "answer": body.answer or None}
     try:
-        r = evaluate_question(item, backend, n_variants=body.variants, answer_type=body.answer_type, workers=body.variants)
+        # Free-tier Gemini keys have low per-minute limits, so send fewer requests at once.
+        workers = 4 if provider(body.model) == "gemini" else body.variants
+        r = evaluate_question(item, backend, n_variants=body.variants, answer_type=body.answer_type, workers=workers)
     except RuntimeError as e:
         msg = str(e)
         if "429" in msg or "529" in msg:

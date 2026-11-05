@@ -1,14 +1,17 @@
 name: update leaderboard
 
 # Manual: Actions tab -> "update leaderboard" -> Run workflow.
-# Needs the repository secret ANTHROPIC_API_KEY. Results are committed to
+# Needs the repository secret GEMINI_API_KEY (a free Google AI Studio key works)
+# and, optionally, ANTHROPIC_API_KEY for Claude models. Results are committed to
 # web/src/data/leaderboard.json so every number on the site is auditable.
+# Replies are cached between runs, so a run stopped by a free-tier daily limit
+# continues where it left off the next time.
 on:
   workflow_dispatch:
     inputs:
       models:
         description: "Comma-separated model IDs"
-        default: "claude-haiku-5-5,claude-sonnet-5-5"
+        default: "gemini-3.5-flash-lite,gemini-3.8-flash"
         required: true
 
 permissions:
@@ -28,8 +31,15 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -e .
+      - name: Restore reply cache
+        uses: actions/cache@v4
+        with:
+          path: web/.leaderboard_cache.jsonl
+          key: leaderboard-cache-${{ github.run_id }}
+          restore-keys: leaderboard-cache-
       - name: Run leaderboard
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MODELS: ${{ inputs.models }}
         run: python web/scripts/build_leaderboard.py --models "$MODELS"

@@ -8,7 +8,7 @@ authors:
     given-names: Kishore
 repository-code: "https://github.com/kishoren18-hue/flipcheck"
 license: MIT
-version: 0.2.0
+version: 0.3.0
 date-released: "2026-11-04"
 keywords:
   - robustness

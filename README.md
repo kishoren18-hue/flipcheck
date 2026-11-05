@@ -26,7 +26,7 @@ In the simulated demo, single-wording accuracy is 80% but only 55% of questions 
 
 ## Web app
 
-There's also a hosted version with a public **model stability leaderboard** (results versioned in git) and a live tester for any question, built with Next.js, FastAPI, Supabase and the Claude API. See [`web/`](web/README.md).
+There's also a hosted version with a public **model stability leaderboard** (results versioned in git) and a live tester for any question, built with Next.js, FastAPI and Supabase, that ranks models from different companies side by side (Gemini and Claude). See [`web/`](web/README.md).
 
 ## Quick start
 
@@ -40,6 +40,10 @@ flipcheck examples/questions.jsonl --backend openai --model gpt-4o-mini --html r
 # Anthropic
 export ANTHROPIC_API_KEY=...
 flipcheck examples/questions.jsonl --backend anthropic --model <model-name> --html report.html
+
+# Google Gemini (a free key from Google AI Studio works)
+export GEMINI_API_KEY=...
+flipcheck examples/questions.jsonl --backend gemini --model gemini-3.5-flash-lite --html report.html
 
 # anything that reads a prompt on stdin
 flipcheck examples/questions.jsonl --backend command --cmd "ollama run llama3.1" --html report.html
