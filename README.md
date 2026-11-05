@@ -24,6 +24,10 @@ A model that answers "Canberra" to *"What is the capital of Australia?"* but "Sy
 
 In the simulated demo, single-wording accuracy is 80% but only 55% of questions are answered correctly under every wording. That gap is what flipcheck exists to expose.
 
+## Web app
+
+There's also a hosted version with a public **model stability leaderboard** (results versioned in git) and a live tester for any question, built with Next.js, FastAPI, Supabase and the Claude API. See [`web/`](web/README.md).
+
 ## Quick start
 
 ```bash
